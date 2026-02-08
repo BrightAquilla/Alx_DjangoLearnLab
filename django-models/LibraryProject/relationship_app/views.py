@@ -2,16 +2,24 @@ from django.contrib.auth.decorators import user_passes_test, permission_required
 from django.views.generic.detail import DetailView
 from .models import Library
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Book
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.views import LoginView, LogoutView
 
 class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
+
+class CustomLoginView(LoginView):
+    template_name = 'relationship_app/login.html'
+
+class CustomLogoutView(LogoutView):
+    template_name = 'relationship_app/logout.html'
+
 
 def list_books(request):
     books = Book.objects.all()
@@ -27,6 +35,17 @@ def is_librarian(user):
 
 def is_member(user):
     return user.is_authenticated and user.userprofile.role == 'Member'
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm()
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'relationship_app/register.html', {'form': form})
 
 
 @user_passes_test(is_admin)
