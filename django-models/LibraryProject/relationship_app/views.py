@@ -26,7 +26,7 @@ def list_books(request):
     return render(request, 'relationship_app/list_books.html', {'books': books})
 
 def is_admin(user):
-    return user.is_authenticated and user.userprofile.role == 'Admin'
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
 
 
 def is_librarian(user):
