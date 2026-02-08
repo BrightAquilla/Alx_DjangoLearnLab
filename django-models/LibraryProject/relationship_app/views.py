@@ -34,7 +34,7 @@ def is_librarian(user):
 
 
 def is_member(user):
-    return user.is_authenticated and user.userprofile.role == 'Member'
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
 def register(request):
     if request.method == 'POST':
